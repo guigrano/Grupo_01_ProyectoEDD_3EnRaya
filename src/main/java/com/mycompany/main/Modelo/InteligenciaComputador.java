@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.main;
+package com.mycompany.main.Modelo;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class InteligenciaComputador {
                 int fila = coordenada[0];
                 int col = coordenada[1];
                 
-                if (tablero.getSimboloEnCasilla(fila, col) == simboloOponente) {
+                if (tablero.getCasilla(fila, col) == simboloOponente) {
                     lineaBloqueada = true;
                     break;
                 }
@@ -89,7 +89,7 @@ public class InteligenciaComputador {
     public void generarPosiblesTableros(Tablero tablero, Simbolo simbolo, TreeNode<Tablero> root) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (tablero.getSimboloEnCasilla(i, j) == Simbolo.VACIO) {
+                if (tablero.getCasilla(i, j) == Simbolo.VACIO) {
                     Tablero copiaTablero = tablero.copiarTablero();
                     copiaTablero.marcarCasilla(i, j, simbolo);
                     

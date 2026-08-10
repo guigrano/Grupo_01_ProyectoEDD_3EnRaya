@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.main;
+package com.mycompany.main.Modelo;
 
 /**
  *
@@ -46,10 +46,36 @@ public class Tablero {
         tablero[fila][col] = s;
     }
     
-    public Simbolo getSimboloEnCasilla(int fila, int col) {
+    public Simbolo getCasilla(int fila, int col) {
         return tablero[fila][col];
     }
-
+    
+    public boolean esGanador(Simbolo simbolo) {
+        for (int[][] linea : LINEAS_GANADORAS) {
+            Simbolo casilla1 = tablero[linea[0][0]][linea[0][1]];
+            Simbolo casilla2 = tablero[linea[1][0]][linea[1][1]];
+            Simbolo casilla3 = tablero[linea[2][0]][linea[2][1]];
+            
+            if (casilla1 == simbolo && casilla2 == simbolo && casilla3 == simbolo) return true;
+        }
+        
+        return false;
+    }
+    
+    public boolean esEmpate() {
+        if (esGanador(Simbolo.X) || esGanador(Simbolo.O)) return false;
+        return estaLleno();
+    }
+    
+    public boolean estaLleno() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (tablero[i][j] == Simbolo.VACIO) return false;
+            }
+        }
+        
+        return true;
+    }
 
     // metodo temporal para pruebas
     public void mostrarTablero() {

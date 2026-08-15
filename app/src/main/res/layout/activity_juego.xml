@@ -114,6 +114,15 @@
         android:textSize="18sp"
         android:visibility="gone" />
 
+    <Button
+        android:id="@+id/btnPensamiento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:text="Mostrar pensamiento de la computadora"
+        android:textSize="16sp" />
+
     <!-- Resultado -->
     <TextView
         android:id="@+id/tvResultado"

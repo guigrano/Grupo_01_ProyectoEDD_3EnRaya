@@ -5,6 +5,7 @@
 package com.example.proyectoedd.modelo;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class InteligenciaComputador {
     private Simbolo simboloComputador;
@@ -116,44 +117,99 @@ public class InteligenciaComputador {
     //Primer metodo de funcionalidades extras
     public int[] recomendarMovimiento(Tablero tablero) {
 
-        int mejorUtilidad = 100;
+        int mejorUtilidad = Integer.MAX_VALUE;
         int[] mejorMovimiento = {-1, -1};
 
         for (int fila = 0; fila < 3; fila++) {
+
             for (int col = 0; col < 3; col++) {
 
-                if (tablero.getCasilla(fila, col) == Simbolo.VACIO) {
-
-                    Tablero tableroCandidato = tablero.copiarTablero();
-
-                    tableroCandidato.marcarCasilla(
-                            fila,
-                            col,
-                            simboloHumano
-                    );
-
-                    // Si el humano puede ganar inmediatamente,
-                    // esa es la mejor jugada.
-                    if (tableroCandidato.esGanador(simboloHumano)) {
-                        return new int[]{fila, col};
-                    }
-
-                    // La computadora analiza cuál sería su mejor
-                    // respuesta después de la jugada del humano.
-                    Tablero respuestaComputador =
-                            decidirMejorMovimiento(tableroCandidato);
-
-                    int utilidad =
-                            calcularUtilidad(respuestaComputador);
-
-                    if (utilidad < mejorUtilidad) {
-                        mejorUtilidad = utilidad;
-                        mejorMovimiento = new int[]{fila, col};
-                    }
+                // Solo se pueden recomendar casillas vacías
+                if (tablero.getCasilla(fila, col) != Simbolo.VACIO) {
+                    continue;
                 }
+
+                Tablero tableroCandidato = tablero.copiarTablero();
+
+                // Simulamos la jugada del humano
+                tableroCandidato.marcarCasilla(
+                        fila,
+                        col,
+                        simboloHumano
+                );
+
+                // Si el humano gana inmediatamente,
+                // esta es automáticamente una buena recomendación.
+                if (tableroCandidato.esGanador(simboloHumano)) {
+                    return new int[]{fila, col};
+                }
+
+                // Simulamos la mejor respuesta de la computadora.
+                Tablero respuestaComputador =
+                        decidirMejorMovimiento(tableroCandidato);
+
+                int utilidad =
+                        calcularUtilidad(respuestaComputador);
+
+                if (utilidad < mejorUtilidad) {
+
+                    mejorUtilidad = utilidad;
+
+                    mejorMovimiento = new int[]{fila, col};
+                }
+            }
+        }
+
+        // Verificación final:
+        // nunca devolver una casilla que esté ocupada.
+        if (mejorMovimiento[0] != -1
+                && mejorMovimiento[1] != -1) {
+
+            if (tablero.getCasilla(
+                    mejorMovimiento[0],
+                    mejorMovimiento[1]
+            ) != Simbolo.VACIO) {
+
+                return buscarCasillaDisponible(tablero);
             }
         }
 
         return mejorMovimiento;
     }
+
+    private int[] buscarCasillaDisponible(Tablero tablero) {
+
+        for (int fila = 0; fila < 3; fila++) {
+
+            for (int col = 0; col < 3; col++) {
+
+                if (tablero.getCasilla(fila, col) == Simbolo.VACIO) {
+                    return new int[]{fila, col};
+                }
+            }
+        }
+
+        return new int[]{-1, -1};
+    }
+
+    //SEGUNDA FUNCIONALIDAD
+    public List<PensamientoComputadora> obtenerPensamiento(Tablero tablero) {
+
+        List<PensamientoComputadora> pensamientos = new ArrayList<>();
+
+        TreeNode<Tablero> arbolMinimax = generarArbolMinimax(tablero);
+
+        for (TreeNode<Tablero> hijo : arbolMinimax.getChildren()) {
+
+            pensamientos.add(
+                    new PensamientoComputadora(
+                            hijo.getContent(),
+                            hijo.getUtilidad()
+                    )
+            );
+        }
+
+        return pensamientos;
+    }
+
 }

@@ -4,6 +4,8 @@ import com.example.proyectoedd.modelo.InteligenciaComputador;
 import com.example.proyectoedd.modelo.Partida;
 import com.example.proyectoedd.modelo.Simbolo;
 import com.example.proyectoedd.modelo.Tablero;
+import java.util.List;
+import com.example.proyectoedd.modelo.PensamientoComputadora;
 
 public class MotorJuego {
 
@@ -74,6 +76,10 @@ public class MotorJuego {
 
     public int[] recomendarMovimientoHumano() {
         return partida.recomendarMovimientoHumano();
+    }
+
+    public List<PensamientoComputadora> obtenerPensamientoComputadora() {
+        return partida.obtenerPensamientoComputadora();
     }
 
 }

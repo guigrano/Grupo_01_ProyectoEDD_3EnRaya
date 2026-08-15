@@ -1,5 +1,8 @@
 package com.example.proyectoedd.modelo;
 
+
+import java.util.ArrayList;
+import java.util.List;
 public class Partida {
     private Tablero tablero;
     private Simbolo turnoActual;
@@ -69,6 +72,15 @@ public class Partida {
         }
 
         return ia.recomendarMovimiento(tablero);
+    }
+
+    public List<PensamientoComputadora> obtenerPensamientoComputadora() {
+
+        if (partidaTerminada()) {
+            return new ArrayList<>();
+        }
+
+        return ia.obtenerPensamiento(tablero);
     }
 
 }

@@ -15,6 +15,10 @@ import com.example.proyectoedd.R;
 import com.example.proyectoedd.controlador.MotorJuego;
 import com.example.proyectoedd.modelo.Simbolo;
 import com.example.proyectoedd.modelo.Tablero;
+import android.app.AlertDialog;
+import android.view.View;
+import java.util.List;
+import com.example.proyectoedd.modelo.PensamientoComputadora;
 
 public class JuegoActivity extends AppCompatActivity {
 
@@ -26,6 +30,7 @@ public class JuegoActivity extends AppCompatActivity {
     private TextView tvRecomendacion;
 
     private Button btnJugarDeNuevo;
+    private Button btnPensamiento;
     private ImageButton btnRegresar;
 
     private Button[][] botones;
@@ -48,6 +53,7 @@ public class JuegoActivity extends AppCompatActivity {
 
         btnJugarDeNuevo = findViewById(R.id.btnJugarDeNuevo);
         btnRegresar = findViewById(R.id.btnRegresar);
+        btnPensamiento = findViewById(R.id.btnPensamiento);
 
         inicializarBotones();
 
@@ -65,6 +71,8 @@ public class JuegoActivity extends AppCompatActivity {
         btnRegresar.setOnClickListener(v -> finish());
 
         btnJugarDeNuevo.setOnClickListener(v -> reiniciarJuego());
+
+        btnPensamiento.setOnClickListener(v -> mostrarPensamientoComputadora());
 
         actualizarPantalla();
 
@@ -319,5 +327,70 @@ public class JuegoActivity extends AppCompatActivity {
         handler.removeCallbacksAndMessages(null);
 
         super.onDestroy();
+    }
+
+    private void mostrarPensamientoComputadora() {
+
+        List<PensamientoComputadora> pensamientos =
+                motor.obtenerPensamientoComputadora();
+
+        if (pensamientos.isEmpty()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Pensamiento de la computadora")
+                    .setMessage("La computadora no tiene movimientos que analizar.")
+                    .setPositiveButton("Cerrar", null)
+                    .show();
+
+            return;
+        }
+
+        StringBuilder mensaje = new StringBuilder();
+
+        for (int i = 0; i < pensamientos.size(); i++) {
+
+            PensamientoComputadora pensamiento = pensamientos.get(i);
+
+            mensaje.append("MOVIMIENTO ")
+                    .append(i + 1)
+                    .append("\n");
+
+            Tablero tablero =
+                    pensamiento.getTablero();
+
+            for (int fila = 0; fila < 3; fila++) {
+
+                for (int col = 0; col < 3; col++) {
+
+                    Simbolo simbolo =
+                            tablero.getCasilla(fila, col);
+
+                    if (simbolo == Simbolo.VACIO) {
+                        mensaje.append("·");
+                    } else {
+                        mensaje.append(simbolo.toString());
+                    }
+
+                    if (col < 2) {
+                        mensaje.append(" | ");
+                    }
+                }
+
+                mensaje.append("\n");
+
+                if (fila < 2) {
+                    mensaje.append("---------\n");
+                }
+            }
+
+            mensaje.append("\nUtilidad: ")
+                    .append(pensamiento.getUtilidad())
+                    .append("\n\n");
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Pensamiento de la computadora")
+                .setMessage(mensaje.toString())
+                .setPositiveButton("Cerrar", null)
+                .show();
     }
 }

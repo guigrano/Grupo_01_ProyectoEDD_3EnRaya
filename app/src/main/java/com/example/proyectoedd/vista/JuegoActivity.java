@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.graphics.Color;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -168,17 +169,20 @@ public class JuegoActivity extends AppCompatActivity {
 
                 } else {
 
-                    botones[fila][col]
-                            .setText(simbolo.toString());
+                    botones[fila][col].setText(simbolo.toString());
 
+                    if (simbolo.toString().equals("X")) {
+                        botones[fila][col].setTextColor(Color.parseColor("#E74C3C"));
+                    } else if (simbolo.toString().equals("O")) {
+                        botones[fila][col].setTextColor(Color.parseColor("#2980B9"));
+                    }
                 }
             }
         }
 
         if (!motor.verificarFinJuego()) {
 
-            if (motor.getTurnoActual()
-                    == motor.getSimboloHumano()) {
+            if (motor.getTurnoActual() == motor.getSimboloHumano()) {
 
                 tvTurno.setText("Tu turno");
 

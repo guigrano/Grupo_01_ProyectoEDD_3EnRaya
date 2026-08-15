@@ -22,6 +22,7 @@ public class JuegoActivity extends AppCompatActivity {
     private GridLayout cuadriculaUI;
     private TextView tvTurno;
     private TextView tvResultado;
+    private TextView tvRecomendacion;
 
     private Button btnJugarDeNuevo;
     private ImageButton btnRegresar;
@@ -42,6 +43,7 @@ public class JuegoActivity extends AppCompatActivity {
         cuadriculaUI = findViewById(R.id.cuadriculaUI);
         tvTurno = findViewById(R.id.tvTurno);
         tvResultado = findViewById(R.id.tvResultado);
+        tvRecomendacion = findViewById(R.id.tvRecomendacion);
 
         btnJugarDeNuevo = findViewById(R.id.btnJugarDeNuevo);
         btnRegresar = findViewById(R.id.btnRegresar);
@@ -182,13 +184,39 @@ public class JuegoActivity extends AppCompatActivity {
 
                 desbloquearTablero();
 
+                mostrarRecomendacion();
+
             } else {
 
                 tvTurno.setText("Turno de la PC...");
 
                 bloquearTablero();
+
+                tvRecomendacion.setVisibility(TextView.GONE);
             }
         }
+    }
+
+    private void mostrarRecomendacion() {
+
+        int[] movimiento = motor.recomendarMovimientoHumano();
+
+        if (movimiento[0] == -1 || movimiento[1] == -1) {
+            tvRecomendacion.setVisibility(TextView.GONE);
+            return;
+        }
+
+        int fila = movimiento[0] + 1;
+        int columna = movimiento[1] + 1;
+
+        tvRecomendacion.setText(
+                "Te recomendamos jugar en Fila "
+                        + fila
+                        + ", Columna "
+                        + columna
+        );
+
+        tvRecomendacion.setVisibility(TextView.VISIBLE);
     }
 
     private void mostrarResultado() {

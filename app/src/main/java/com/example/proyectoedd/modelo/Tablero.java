@@ -1,13 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.example.proyectoedd.modelo;
 
-/**
- *
- * @author guill
- */
 public class Tablero {
     private Simbolo[][] tablero;
     public static final int[][][] LINEAS_GANADORAS = {

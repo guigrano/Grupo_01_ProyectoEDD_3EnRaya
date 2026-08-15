@@ -71,4 +71,9 @@ public class MotorJuego {
     public Simbolo getSimboloComputador() {
         return simboloComputador;
     }
+
+    public int[] recomendarMovimientoHumano() {
+        return partida.recomendarMovimientoHumano();
+    }
+
 }

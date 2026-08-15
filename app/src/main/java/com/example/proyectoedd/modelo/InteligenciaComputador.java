@@ -6,10 +6,6 @@ package com.example.proyectoedd.modelo;
 
 import java.util.List;
 
-/**
- *
- * @author guill
- */
 public class InteligenciaComputador {
     private Simbolo simboloComputador;
     private Simbolo simboloHumano;
@@ -115,5 +111,49 @@ public class InteligenciaComputador {
         }
         
         return utilidadMinima;
+    }
+
+    //Primer metodo de funcionalidades extras
+    public int[] recomendarMovimiento(Tablero tablero) {
+
+        int mejorUtilidad = 100;
+        int[] mejorMovimiento = {-1, -1};
+
+        for (int fila = 0; fila < 3; fila++) {
+            for (int col = 0; col < 3; col++) {
+
+                if (tablero.getCasilla(fila, col) == Simbolo.VACIO) {
+
+                    Tablero tableroCandidato = tablero.copiarTablero();
+
+                    tableroCandidato.marcarCasilla(
+                            fila,
+                            col,
+                            simboloHumano
+                    );
+
+                    // Si el humano puede ganar inmediatamente,
+                    // esa es la mejor jugada.
+                    if (tableroCandidato.esGanador(simboloHumano)) {
+                        return new int[]{fila, col};
+                    }
+
+                    // La computadora analiza cuál sería su mejor
+                    // respuesta después de la jugada del humano.
+                    Tablero respuestaComputador =
+                            decidirMejorMovimiento(tableroCandidato);
+
+                    int utilidad =
+                            calcularUtilidad(respuestaComputador);
+
+                    if (utilidad < mejorUtilidad) {
+                        mejorUtilidad = utilidad;
+                        mejorMovimiento = new int[]{fila, col};
+                    }
+                }
+            }
+        }
+
+        return mejorMovimiento;
     }
 }

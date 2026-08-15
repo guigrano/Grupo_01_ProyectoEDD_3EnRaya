@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.example.proyectoedd.modelo;
 
-/**
- *
- * @author guill
- */
 public class Partida {
     private Tablero tablero;
     private Simbolo turnoActual;
@@ -66,4 +58,17 @@ public class Partida {
     public Simbolo getTurnoActual() {
         return this.turnoActual;
     }
+
+
+    //usar primer metodo especial
+    public int[] recomendarMovimientoHumano() {
+        if (partidaTerminada()) return new int[]{-1, -1};
+
+        if (turnoActual != simboloJugador1) {
+            return new int[]{-1, -1};
+        }
+
+        return ia.recomendarMovimiento(tablero);
+    }
+
 }

@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TresEnRaya"
+rootProject.name = "ProyectoEDD"
 include(":app")

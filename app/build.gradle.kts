@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.tresenraya"
+    namespace = "com.example.proyectoedd"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.tresenraya"
+        applicationId = "com.example.proyectoedd"
         minSdk = 24
         targetSdk = 37
         versionCode = 1

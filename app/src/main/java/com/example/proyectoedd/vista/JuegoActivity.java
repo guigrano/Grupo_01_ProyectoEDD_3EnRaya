@@ -16,9 +16,9 @@ import com.example.proyectoedd.controlador.MotorJuego;
 import com.example.proyectoedd.modelo.Simbolo;
 import com.example.proyectoedd.modelo.Tablero;
 import android.app.AlertDialog;
-import android.view.View;
+
 import java.util.List;
-import com.example.proyectoedd.modelo.PensamientoComputadora;
+import android.content.Intent;
 
 public class JuegoActivity extends AppCompatActivity {
 
@@ -72,7 +72,7 @@ public class JuegoActivity extends AppCompatActivity {
 
         btnJugarDeNuevo.setOnClickListener(v -> reiniciarJuego());
 
-        btnPensamiento.setOnClickListener(v -> mostrarPensamientoComputadora());
+        btnPensamiento.setOnClickListener(v -> abrirPensamiento());
 
         actualizarPantalla();
 
@@ -329,68 +329,52 @@ public class JuegoActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void mostrarPensamientoComputadora() {
+    private String[] obtenerEstadoTablero() {
 
-        List<PensamientoComputadora> pensamientos =
-                motor.obtenerPensamientoComputadora();
+        Tablero tablero = motor.getTablero();
 
-        if (pensamientos.isEmpty()) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Pensamiento de la computadora")
-                    .setMessage("La computadora no tiene movimientos que analizar.")
-                    .setPositiveButton("Cerrar", null)
-                    .show();
+        String[] estado = new String[9];
 
-            return;
-        }
+        int posicion = 0;
 
-        StringBuilder mensaje = new StringBuilder();
+        for (int fila = 0; fila < 3; fila++) {
 
-        for (int i = 0; i < pensamientos.size(); i++) {
+            for (int col = 0; col < 3; col++) {
 
-            PensamientoComputadora pensamiento = pensamientos.get(i);
+                estado[posicion] =
+                        tablero.getCasilla(fila, col).name();
 
-            mensaje.append("MOVIMIENTO ")
-                    .append(i + 1)
-                    .append("\n");
-
-            Tablero tablero =
-                    pensamiento.getTablero();
-
-            for (int fila = 0; fila < 3; fila++) {
-
-                for (int col = 0; col < 3; col++) {
-
-                    Simbolo simbolo =
-                            tablero.getCasilla(fila, col);
-
-                    if (simbolo == Simbolo.VACIO) {
-                        mensaje.append("·");
-                    } else {
-                        mensaje.append(simbolo.toString());
-                    }
-
-                    if (col < 2) {
-                        mensaje.append(" | ");
-                    }
-                }
-
-                mensaje.append("\n");
-
-                if (fila < 2) {
-                    mensaje.append("---------\n");
-                }
+                posicion++;
             }
-
-            mensaje.append("\nUtilidad: ")
-                    .append(pensamiento.getUtilidad())
-                    .append("\n\n");
         }
 
-        new AlertDialog.Builder(this)
-                .setTitle("Pensamiento de la computadora")
-                .setMessage(mensaje.toString())
-                .setPositiveButton("Cerrar", null)
-                .show();
+        return estado;
     }
+
+    private void abrirPensamiento() {
+
+        Intent intent = new Intent(
+                JuegoActivity.this,
+                PensamientoActivity.class
+        );
+
+        intent.putExtra(
+                "tablero",
+                obtenerEstadoTablero()
+        );
+
+        intent.putExtra(
+                "simboloHumano",
+                motor.getSimboloHumano().name()
+        );
+
+        intent.putExtra(
+                "simboloComputador",
+                motor.getSimboloComputador().name()
+        );
+
+        startActivity(intent);
+    }
+
+
 }

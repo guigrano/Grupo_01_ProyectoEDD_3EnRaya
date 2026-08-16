@@ -5,7 +5,6 @@
 package com.example.proyectoedd.modelo;
 
 import java.util.List;
-import java.util.ArrayList;
 
 public class InteligenciaComputador {
     private Simbolo simboloComputador;
@@ -193,23 +192,9 @@ public class InteligenciaComputador {
     }
 
     //SEGUNDA FUNCIONALIDAD
-    public List<PensamientoComputadora> obtenerPensamiento(Tablero tablero) {
-
-        List<PensamientoComputadora> pensamientos = new ArrayList<>();
-
-        TreeNode<Tablero> arbolMinimax = generarArbolMinimax(tablero);
-
-        for (TreeNode<Tablero> hijo : arbolMinimax.getChildren()) {
-
-            pensamientos.add(
-                    new PensamientoComputadora(
-                            hijo.getContent(),
-                            hijo.getUtilidad()
-                    )
-            );
-        }
-
-        return pensamientos;
+    public TreeNode<Tablero> obtenerArbolPensamiento(Tablero tablero) {
+        return generarArbolMinimax(tablero);
     }
+
 
 }

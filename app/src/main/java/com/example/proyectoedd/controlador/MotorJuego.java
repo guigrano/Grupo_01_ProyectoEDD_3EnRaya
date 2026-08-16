@@ -4,8 +4,7 @@ import com.example.proyectoedd.modelo.InteligenciaComputador;
 import com.example.proyectoedd.modelo.Partida;
 import com.example.proyectoedd.modelo.Simbolo;
 import com.example.proyectoedd.modelo.Tablero;
-import java.util.List;
-import com.example.proyectoedd.modelo.PensamientoComputadora;
+import com.example.proyectoedd.modelo.TreeNode;
 
 public class MotorJuego {
 
@@ -78,8 +77,20 @@ public class MotorJuego {
         return partida.recomendarMovimientoHumano();
     }
 
-    public List<PensamientoComputadora> obtenerPensamientoComputadora() {
-        return partida.obtenerPensamientoComputadora();
+    public TreeNode<Tablero> obtenerArbolPensamiento() {
+        return partida.obtenerArbolPensamiento();
     }
+    public TreeNode<Tablero> generarArbolPensamiento(
+            Tablero tablero) {
+
+        InteligenciaComputador ia =
+                new InteligenciaComputador(
+                        simboloComputador,
+                        simboloHumano
+                );
+
+        return ia.obtenerArbolPensamiento(tablero);
+    }
+
 
 }

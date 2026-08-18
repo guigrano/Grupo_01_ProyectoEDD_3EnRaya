@@ -31,11 +31,15 @@ public class JuegoActivity extends AppCompatActivity {
 
     private Button btnJugarDeNuevo;
     private Button btnPensamiento;
+    private Button btnDeshacer;
+    private Button btnRehacer;
     private ImageButton btnRegresar;
 
     private Button[][] botones;
 
     private Handler handler;
+
+    private boolean esModoPVP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,8 @@ public class JuegoActivity extends AppCompatActivity {
         btnJugarDeNuevo = findViewById(R.id.btnJugarDeNuevo);
         btnRegresar = findViewById(R.id.btnRegresar);
         btnPensamiento = findViewById(R.id.btnPensamiento);
+        btnDeshacer = findViewById(R.id.btnDeshacer);
+        btnRehacer = findViewById(R.id.btnRehacer);
 
         inicializarBotones();
 
@@ -63,10 +69,17 @@ public class JuegoActivity extends AppCompatActivity {
         boolean humanoInicia =
                 getIntent().getBooleanExtra("humanoInicia", true);
 
-        motor.iniciarJuego(
-                simboloHumano,
-                humanoInicia
-        );
+        String modoJuego =
+                getIntent().getStringExtra("modoJuego");
+
+        esModoPVP = "PVP".equals(modoJuego);
+
+        if (esModoPVP) {
+            motor.iniciarJuegoPvP(simboloHumano, humanoInicia);
+            btnPensamiento.setVisibility(Button.GONE);
+        } else {
+            motor.iniciarJuego(simboloHumano, humanoInicia);
+        }
 
         btnRegresar.setOnClickListener(v -> finish());
 
@@ -74,9 +87,13 @@ public class JuegoActivity extends AppCompatActivity {
 
         btnPensamiento.setOnClickListener(v -> abrirPensamiento());
 
+        btnDeshacer.setOnClickListener(v -> ejecutarDeshacer());
+
+        btnRehacer.setOnClickListener(v -> ejecutarRehacer());
+
         actualizarPantalla();
 
-        if (!humanoInicia) {
+        if (!esModoPVP && !humanoInicia) {
             prepararTurnoComputador();
         }
     }
@@ -117,7 +134,7 @@ public class JuegoActivity extends AppCompatActivity {
             return;
         }
 
-        if (motor.getTurnoActual() != motor.getSimboloHumano()) {
+        if (!esModoPVP && motor.getTurnoActual() != motor.getSimboloHumano()) {
             return;
         }
 
@@ -135,7 +152,9 @@ public class JuegoActivity extends AppCompatActivity {
             return;
         }
 
-        prepararTurnoComputador();
+        if (!esModoPVP) {
+            prepararTurnoComputador();
+        }
     }
 
     private void prepararTurnoComputador() {
@@ -190,9 +209,14 @@ public class JuegoActivity extends AppCompatActivity {
 
         if (!motor.verificarFinJuego()) {
 
-            if (motor.getTurnoActual() == motor.getSimboloHumano()) {
+            if (esModoPVP) {
 
-                tvTurno.setText("Tu turno");
+                Simbolo turno = motor.getTurnoActual();
+                if (turno == motor.getSimboloJugador1()) {
+                    tvTurno.setText("Turno de Jugador 1 (" + turno + ")");
+                } else {
+                    tvTurno.setText("Turno de Jugador 2 (" + turno + ")");
+                }
 
                 desbloquearTablero();
 
@@ -200,18 +224,31 @@ public class JuegoActivity extends AppCompatActivity {
 
             } else {
 
-                tvTurno.setText("Turno de la PC...");
+                if (motor.getTurnoActual() == motor.getSimboloHumano()) {
 
-                bloquearTablero();
+                    tvTurno.setText("Tu turno");
 
-                tvRecomendacion.setVisibility(TextView.GONE);
+                    desbloquearTablero();
+
+                    mostrarRecomendacion();
+
+                } else {
+
+                    tvTurno.setText("Turno de la PC...");
+
+                    bloquearTablero();
+
+                    tvRecomendacion.setVisibility(TextView.GONE);
+                }
             }
         }
+
+        actualizarBotonesUndoRedo();
     }
 
     private void mostrarRecomendacion() {
 
-        int[] movimiento = motor.recomendarMovimientoHumano();
+        int[] movimiento = motor.recomendarMovimiento();
 
         if (movimiento[0] == -1 || movimiento[1] == -1) {
             tvRecomendacion.setVisibility(TextView.GONE);
@@ -243,6 +280,14 @@ public class JuegoActivity extends AppCompatActivity {
 
             tvResultado.setText("EMPATE");
 
+        } else if (esModoPVP) {
+
+            if (resultado == 1) {
+                tvResultado.setText("Jugador 1 (" + motor.getSimboloJugador1() + ") ganó");
+            } else {
+                tvResultado.setText("Jugador 2 (" + motor.getSimboloJugador2() + ") ganó");
+            }
+
         } else {
 
             Simbolo ganador;
@@ -265,6 +310,53 @@ public class JuegoActivity extends AppCompatActivity {
 
         tvResultado.setVisibility(TextView.VISIBLE);
         btnJugarDeNuevo.setVisibility(Button.VISIBLE);
+
+        actualizarBotonesUndoRedo();
+    }
+
+    private void ejecutarDeshacer() {
+
+        if (!motor.puedeDeshacer()) return;
+
+        if (!esModoPVP) {
+            motor.deshacer();
+            if (motor.puedeDeshacer()) {
+                motor.deshacer();
+            }
+        } else {
+            motor.deshacer();
+        }
+
+        tvResultado.setVisibility(TextView.GONE);
+        btnJugarDeNuevo.setVisibility(Button.GONE);
+
+        actualizarPantalla();
+    }
+
+    private void ejecutarRehacer() {
+
+        if (!motor.puedeRehacer()) return;
+
+        if (!esModoPVP) {
+            motor.rehacer();
+            if (motor.puedeRehacer()) {
+                motor.rehacer();
+            }
+        } else {
+            motor.rehacer();
+        }
+
+        actualizarPantalla();
+
+        if (motor.verificarFinJuego()) {
+            mostrarResultado();
+        }
+    }
+
+    private void actualizarBotonesUndoRedo() {
+
+        btnDeshacer.setEnabled(motor.puedeDeshacer());
+        btnRehacer.setEnabled(motor.puedeRehacer());
     }
 
     private void bloquearTablero() {
@@ -309,14 +401,15 @@ public class JuegoActivity extends AppCompatActivity {
         boolean humanoInicia =
                 getIntent().getBooleanExtra("humanoInicia", true);
 
-        motor.iniciarJuego(
-                simboloHumano,
-                humanoInicia
-        );
+        if (esModoPVP) {
+            motor.iniciarJuegoPvP(simboloHumano, humanoInicia);
+        } else {
+            motor.iniciarJuego(simboloHumano, humanoInicia);
+        }
 
         actualizarPantalla();
 
-        if (!humanoInicia) {
+        if (!esModoPVP && !humanoInicia) {
             prepararTurnoComputador();
         }
     }
@@ -329,9 +422,7 @@ public class JuegoActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private String[] obtenerEstadoTablero() {
-
-        Tablero tablero = motor.getTablero();
+    private String[] obtenerEstadoTablero(Tablero tablero) {
 
         String[] estado = new String[9];
 
@@ -360,7 +451,7 @@ public class JuegoActivity extends AppCompatActivity {
 
         intent.putExtra(
                 "tablero",
-                obtenerEstadoTablero()
+                obtenerEstadoTablero(motor.getTableroAnterior())
         );
 
         intent.putExtra(
@@ -375,6 +466,5 @@ public class JuegoActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
-
 
 }

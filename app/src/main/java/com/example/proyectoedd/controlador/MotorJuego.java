@@ -9,44 +9,42 @@ import com.example.proyectoedd.modelo.TreeNode;
 public class MotorJuego {
 
     private Partida partida;
-    private Simbolo simboloHumano;
-    private Simbolo simboloComputador;
+    private Simbolo simboloJugador1;
+    private Simbolo simboloJugador2;
+    private boolean esContraComputador;
 
     public void iniciarJuego(String simboloHumano, boolean humanoInicia) {
 
-        this.simboloHumano = Simbolo.valueOf(simboloHumano);
+        this.simboloJugador1 = Simbolo.valueOf(simboloHumano);
 
-        if (this.simboloHumano == Simbolo.X) {
-            simboloComputador = Simbolo.O;
-        } else {
-            simboloComputador = Simbolo.X;
-        }
+        if (this.simboloJugador1 == Simbolo.X) simboloJugador2 = Simbolo.O;
+        else simboloJugador2 = Simbolo.X;
 
-        InteligenciaComputador ia =
-                new InteligenciaComputador(
-                        simboloComputador,
-                        this.simboloHumano
-                );
+        InteligenciaComputador ia = new InteligenciaComputador(simboloJugador2, this.simboloJugador1);
 
-        partida = new Partida(
-                this.simboloHumano,
-                simboloComputador,
-                humanoInicia,
-                ia,
-                true
-        );
+        this.esContraComputador = true;
+
+        partida = new Partida(this.simboloJugador1, simboloJugador2, humanoInicia, ia, true);
+    }
+
+    public void iniciarJuegoPvP(String simboloJugador1, boolean jugador1Inicia) {
+
+        this.simboloJugador1 = Simbolo.valueOf(simboloJugador1);
+
+        if (this.simboloJugador1 == Simbolo.X) simboloJugador2 = Simbolo.O;
+        else simboloJugador2 = Simbolo.X;
+
+        this.esContraComputador = false;
+
+        partida = new Partida(this.simboloJugador1, simboloJugador2, jugador1Inicia, null, false);
     }
 
     public boolean jugarTurnoHumano(int fila, int col) {
-
         return partida.jugarTurnoHumano(fila, col);
     }
 
     public void jugarTurnoComputador() {
-
-        if (!partida.partidaTerminada()) {
-            partida.jugarTurnoComputador();
-        }
+        if (!partida.partidaTerminada()) partida.jugarTurnoComputador();
     }
 
     public boolean verificarFinJuego() {
@@ -66,31 +64,53 @@ public class MotorJuego {
     }
 
     public Simbolo getSimboloHumano() {
-        return simboloHumano;
+        return simboloJugador1;
     }
 
     public Simbolo getSimboloComputador() {
-        return simboloComputador;
+        return simboloJugador2;
     }
 
-    public int[] recomendarMovimientoHumano() {
-        return partida.recomendarMovimientoHumano();
+    public Simbolo getSimboloJugador1() {
+        return simboloJugador1;
     }
 
-    public TreeNode<Tablero> obtenerArbolPensamiento() {
-        return partida.obtenerArbolPensamiento();
-    }
-    public TreeNode<Tablero> generarArbolPensamiento(
-            Tablero tablero) {
-
-        InteligenciaComputador ia =
-                new InteligenciaComputador(
-                        simboloComputador,
-                        simboloHumano
-                );
-
-        return ia.obtenerArbolPensamiento(tablero);
+    public Simbolo getSimboloJugador2() {
+        return simboloJugador2;
     }
 
+    public boolean isEsContraComputador() {
+        return esContraComputador;
+    }
 
+    public void deshacer() {
+        partida.deshacer();
+    }
+
+    public void rehacer() {
+        partida.rehacer();
+    }
+
+    public boolean puedeDeshacer() {
+        return partida.puedeDeshacer();
+    }
+
+    public boolean puedeRehacer() {
+        return partida.puedeRehacer();
+    }
+
+    public Tablero getTableroAnterior() { return partida.getTableroAnterior(); }
+
+    public int[] recomendarMovimiento() {
+        return partida.recomendarMovimiento();
+    }
+
+    public int[] recomendarMovimientoPvP() {
+        return partida.recomendarMovimiento();
+    }
+
+    public TreeNode<Tablero> generarArbolPensamiento(Tablero tablero) {
+        InteligenciaComputador ia = new InteligenciaComputador(simboloJugador2, simboloJugador1);
+        return ia.generarArbolMinimax(tablero);
+    }
 }

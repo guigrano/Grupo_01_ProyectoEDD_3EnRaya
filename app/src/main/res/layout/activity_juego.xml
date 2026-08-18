@@ -104,6 +104,39 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
+    <!-- Botones Deshacer / Rehacer -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnDeshacer"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="↩ Deshacer"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            app:backgroundTint="#E74C3C"
+            app:cornerRadius="12dp"
+            android:layout_marginEnd="12dp"
+            android:enabled="false"/>
+
+        <Button
+            android:id="@+id/btnRehacer"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="Rehacer ↪"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            app:backgroundTint="#1ABC9C"
+            app:cornerRadius="12dp"
+            android:enabled="false"/>
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tvRecomendacion"
         android:layout_width="wrap_content"
@@ -117,11 +150,14 @@
     <Button
         android:id="@+id/btnPensamiento"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="44dp"
         android:layout_gravity="center"
         android:layout_marginTop="15dp"
         android:text="Mostrar pensamiento de la computadora"
-        android:textSize="16sp" />
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        app:backgroundTint="#2980B9"
+        app:cornerRadius="12dp" />
 
     <!-- Resultado -->
     <TextView
@@ -139,10 +175,14 @@
     <Button
         android:id="@+id/btnJugarDeNuevo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:text="Jugar de nuevo"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        app:backgroundTint="#27AE60"
+        app:cornerRadius="12dp"
         android:visibility="gone" />
 
     <!-- Espacio inferior que empuja el tablero hacia el centro -->

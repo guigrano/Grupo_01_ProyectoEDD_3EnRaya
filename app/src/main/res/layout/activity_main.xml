@@ -1,26 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="#F5F6FA"
     android:gravity="center"
+    android:orientation="vertical"
     android:padding="24dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
         android:text="3 en Raya"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="60dp"/>
+        android:textColor="#2C3E50"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:text="Selecciona un modo de juego"
+        android:textColor="#7F8C8D"
+        android:textSize="18sp" />
 
     <Button
-        android:id="@+id/btnJugar"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:text="Jugar"
-        android:textSize="20sp"/>
+        android:id="@+id/btnJugarPVC"
+        android:layout_width="260dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="20dp"
+        android:text="⚔  vs Computadora"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="#2980B9"
+        app:cornerRadius="16dp" />
+
+    <Button
+        android:id="@+id/btnJugarPVP"
+        android:layout_width="260dp"
+        android:layout_height="64dp"
+        android:text="👥  vs Jugador"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="#27AE60"
+        app:cornerRadius="16dp" />
 
 </LinearLayout>

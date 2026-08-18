@@ -28,6 +28,9 @@ public class PensamientoActivity extends AppCompatActivity {
 
     private MotorJuego motor;
 
+    private boolean enSegundoNivel;
+    private Tablero tableroActual;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +49,13 @@ public class PensamientoActivity extends AppCompatActivity {
         btnVolverPensamiento =
                 findViewById(R.id.btnVolverPensamiento);
 
-        btnVolverPensamiento.setOnClickListener(v -> finish());
+        btnVolverPensamiento.setOnClickListener(v -> {
+            if (enSegundoNivel) {
+                mostrarPrimerNivel(tableroActual);
+            } else {
+                finish();
+            }
+        });
 
         String[] estadoTablero =
                 getIntent().getStringArrayExtra("tablero");
@@ -67,14 +76,12 @@ public class PensamientoActivity extends AppCompatActivity {
 
         motor = new MotorJuego();
 
-        // Inicializamos el controlador con los mismos símbolos
-        // que utiliza la partida original.
         motor.iniciarJuego(
                 simboloHumano,
                 true
         );
 
-        Tablero tableroActual =
+        tableroActual =
                 reconstruirTablero(estadoTablero);
 
         mostrarPrimerNivel(tableroActual);
@@ -91,15 +98,13 @@ public class PensamientoActivity extends AppCompatActivity {
             for (int col = 0; col < 3; col++) {
 
                 Simbolo simbolo =
-                        Simbolo.valueOf(estado[posicion]);
+                        Simbolo.valueOf(estado[posicion++]);
 
                 tablero.marcarCasilla(
                         fila,
                         col,
                         simbolo
                 );
-
-                posicion++;
             }
         }
 
@@ -107,6 +112,8 @@ public class PensamientoActivity extends AppCompatActivity {
     }
 
     private void mostrarPrimerNivel(Tablero tableroActual) {
+
+        enSegundoNivel = false;
 
         tvTituloPensamiento.setText(
                 "Pensamiento de la computadora"
@@ -131,7 +138,7 @@ public class PensamientoActivity extends AppCompatActivity {
             agregarTablero(
                     hijo,
                     i + 1,
-                    false
+                    true
             );
         }
     }
@@ -218,11 +225,12 @@ public class PensamientoActivity extends AppCompatActivity {
 
         contenedor.setLayoutParams(parametros);
 
-        contenedor.setClickable(true);
-
-        contenedor.setOnClickListener(
-                v -> mostrarSegundoNivel(nodo)
-        );
+        if (!enSegundoNivel) {
+            contenedor.setClickable(true);
+            contenedor.setOnClickListener(
+                    v -> mostrarSegundoNivel(nodo)
+            );
+        }
 
         contenedorTableros.addView(contenedor);
     }
@@ -245,7 +253,6 @@ public class PensamientoActivity extends AppCompatActivity {
                 Simbolo simbolo =
                         tablero.getCasilla(fila, col);
 
-                // Mostrar claramente X, O o vacío
                 if (simbolo == Simbolo.X) {
                     casilla.setText("X");
                 } else if (simbolo == Simbolo.O) {
@@ -258,7 +265,6 @@ public class PensamientoActivity extends AppCompatActivity {
                 casilla.setGravity(Gravity.CENTER);
                 casilla.setTextColor(Color.BLACK);
 
-                // Fondo de la casilla
                 android.graphics.drawable.GradientDrawable fondo =
                         new android.graphics.drawable.GradientDrawable();
 
@@ -291,6 +297,8 @@ public class PensamientoActivity extends AppCompatActivity {
 
     private void mostrarSegundoNivel(
             TreeNode<Tablero> nodoSeleccionado) {
+
+        enSegundoNivel = true;
 
         contenedorTableros.removeAllViews();
 

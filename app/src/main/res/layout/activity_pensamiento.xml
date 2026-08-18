@@ -2,17 +2,22 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="#F5F6FA">
 
     <Button
         android:id="@+id/btnVolverPensamiento"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="44dp"
         android:text="← Volver"
-        android:textSize="16sp" />
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        app:backgroundTint="#2C3E50"
+        app:cornerRadius="12dp" />
 
     <TextView
         android:id="@+id/tvTituloPensamiento"
@@ -22,7 +27,8 @@
         android:gravity="center"
         android:text="Pensamiento de la computadora"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="#2C3E50" />
 
     <TextView
         android:id="@+id/tvInstruccionPensamiento"
@@ -31,7 +37,8 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="Selecciona un tablero para ver sus posibles movimientos"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textColor="#7F8C8D" />
 
     <ScrollView
         android:layout_width="match_parent"

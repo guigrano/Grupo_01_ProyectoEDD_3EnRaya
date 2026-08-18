@@ -7,6 +7,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,24 +18,44 @@ public class ConfiguracionActivity extends AppCompatActivity {
     private Button btnX;
     private Button btnO;
     private RadioGroup rgTurno;
+    private RadioButton rbHumano;
+    private RadioButton rbComputadora;
+    private TextView tvQuienComienza;
+    private TextView tvTituloConfig;
     private Button btnContinuar;
     private ImageButton btnRegresarInicio;
     private String simboloSeleccionado = "";
+    private String modoJuego;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuracion);
 
+        modoJuego = getIntent().getStringExtra("modoJuego");
+        if (modoJuego == null) modoJuego = "PVC";
+
         btnX = findViewById(R.id.btnX);
         btnO = findViewById(R.id.btnO);
         rgTurno = findViewById(R.id.rgTurno);
+        rbHumano = findViewById(R.id.rbHumano);
+        rbComputadora = findViewById(R.id.rbComputadora);
+        tvQuienComienza = findViewById(R.id.tvQuienComienza);
+        tvTituloConfig = findViewById(R.id.tvTituloConfig);
         btnContinuar = findViewById(R.id.btnContinuar);
         btnRegresarInicio = findViewById(R.id.btnRegresarInicio);
 
-        btnRegresarInicio.setOnClickListener(v -> {
-            finish(); // Cierra esta Activity y regresa a la anterior (MainActivity)
-        });
+        if (modoJuego.equals("PVP")) {
+            tvTituloConfig.setText("vs Jugador");
+            rbHumano.setText("Jugador 1");
+            rbComputadora.setText("Jugador 2");
+        } else {
+            tvTituloConfig.setText("vs Computadora");
+            rbHumano.setText("Yo");
+            rbComputadora.setText("Computadora");
+        }
+
+        btnRegresarInicio.setOnClickListener(v -> finish());
 
         btnX.setOnClickListener(v -> seleccionarSimbolo("X"));
         btnO.setOnClickListener(v -> seleccionarSimbolo("O"));
@@ -54,16 +75,16 @@ public class ConfiguracionActivity extends AppCompatActivity {
             }
 
             RadioButton radioTurno = findViewById(turnoSeleccionado);
-            boolean humanoInicia = radioTurno.getId() == R.id.rbHumano;
+            boolean jugador1Inicia = radioTurno.getId() == R.id.rbHumano;
 
             Intent intent = new Intent(
                     ConfiguracionActivity.this,
                     JuegoActivity.class
             );
 
-
             intent.putExtra("simboloHumano", simboloSeleccionado);
-            intent.putExtra("humanoInicia", humanoInicia);
+            intent.putExtra("humanoInicia", jugador1Inicia);
+            intent.putExtra("modoJuego", modoJuego);
 
             startActivity(intent);
         });

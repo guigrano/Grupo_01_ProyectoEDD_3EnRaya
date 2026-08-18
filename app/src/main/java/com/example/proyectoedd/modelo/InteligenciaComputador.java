@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.example.proyectoedd.modelo;
 
 import java.util.List;
@@ -18,10 +14,11 @@ public class InteligenciaComputador {
     public Tablero decidirMejorMovimiento(Tablero tablero) {
         TreeNode<Tablero> arbolMinimax = generarArbolMinimax(tablero);
         
-        int utilidadMaxima = -100; // Este valor de utilidad nunca podrá ser obtenido por lo que es un buen valor como cota mínima.
-        Tablero nuevoTablero = tablero;
+        int utilidadMaxima = Integer.MIN_VALUE; // Cota mínima.
+        Tablero nuevoTablero = null;
         
         List<TreeNode<Tablero>> children = arbolMinimax.getChildren();
+        if (!children.isEmpty()) nuevoTablero = children.get(0).getContent();
         for (TreeNode<Tablero> child : children) {
             int utilidadHijo = child.getUtilidad();
             
@@ -35,6 +32,9 @@ public class InteligenciaComputador {
     }
     
     public int calcularUtilidad(Tablero tablero) {
+        if (tablero.esGanador(this.simboloComputador)) return 1000;
+        if (tablero.esGanador(this.simboloHumano)) return -1000;
+
         int lineasComputador = calcularLineasDisponibles(tablero, this.simboloHumano);
         int lineasHumano = calcularLineasDisponibles(tablero, this.simboloComputador);
         
@@ -83,6 +83,10 @@ public class InteligenciaComputador {
     }
     
     public void generarPosiblesTableros(Tablero tablero, Simbolo simbolo, TreeNode<Tablero> root) {
+        if (tablero.esGanador(simboloComputador) || tablero.esGanador(simboloHumano) || tablero.esEmpate()) {
+            return;
+        }
+
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (tablero.getCasilla(i, j) == Simbolo.VACIO) {
@@ -98,9 +102,9 @@ public class InteligenciaComputador {
     
     public int calcularUtilidadMinima(TreeNode<Tablero> root) {
         List<TreeNode<Tablero>> children = root.getChildren();
-        if (children.isEmpty()) return calcularUtilidad(root.getContent());
+        if (root.isLeaf()) return calcularUtilidad(root.getContent());
         
-        int utilidadMinima = 100; // Este valor de utilidad nunca podrá ser obtenido por lo que es un buen valor como cota máxima.
+        int utilidadMinima = Integer.MAX_VALUE; // Cota máxima.
         
         for (TreeNode<Tablero> node : children) {
             Tablero tablero = node.getContent();
@@ -115,86 +119,16 @@ public class InteligenciaComputador {
 
     //Primer metodo de funcionalidades extras
     public int[] recomendarMovimiento(Tablero tablero) {
-
-        int mejorUtilidad = Integer.MAX_VALUE;
-        int[] mejorMovimiento = {-1, -1};
+        Tablero tableroRecomendado = decidirMejorMovimiento(tablero);
 
         for (int fila = 0; fila < 3; fila++) {
-
             for (int col = 0; col < 3; col++) {
-
-                // Solo se pueden recomendar casillas vacías
-                if (tablero.getCasilla(fila, col) != Simbolo.VACIO) {
-                    continue;
-                }
-
-                Tablero tableroCandidato = tablero.copiarTablero();
-
-                // Simulamos la jugada del humano
-                tableroCandidato.marcarCasilla(
-                        fila,
-                        col,
-                        simboloHumano
-                );
-
-                // Si el humano gana inmediatamente,
-                // esta es automáticamente una buena recomendación.
-                if (tableroCandidato.esGanador(simboloHumano)) {
-                    return new int[]{fila, col};
-                }
-
-                // Simulamos la mejor respuesta de la computadora.
-                Tablero respuestaComputador =
-                        decidirMejorMovimiento(tableroCandidato);
-
-                int utilidad =
-                        calcularUtilidad(respuestaComputador);
-
-                if (utilidad < mejorUtilidad) {
-
-                    mejorUtilidad = utilidad;
-
-                    mejorMovimiento = new int[]{fila, col};
-                }
-            }
-        }
-
-        // Verificación final:
-        // nunca devolver una casilla que esté ocupada.
-        if (mejorMovimiento[0] != -1
-                && mejorMovimiento[1] != -1) {
-
-            if (tablero.getCasilla(
-                    mejorMovimiento[0],
-                    mejorMovimiento[1]
-            ) != Simbolo.VACIO) {
-
-                return buscarCasillaDisponible(tablero);
-            }
-        }
-
-        return mejorMovimiento;
-    }
-
-    private int[] buscarCasillaDisponible(Tablero tablero) {
-
-        for (int fila = 0; fila < 3; fila++) {
-
-            for (int col = 0; col < 3; col++) {
-
-                if (tablero.getCasilla(fila, col) == Simbolo.VACIO) {
+                if (tablero.getCasilla(fila, col) == Simbolo.VACIO && tableroRecomendado.getCasilla(fila, col) != Simbolo.VACIO) {
                     return new int[]{fila, col};
                 }
             }
         }
-
+        
         return new int[]{-1, -1};
     }
-
-    //SEGUNDA FUNCIONALIDAD
-    public TreeNode<Tablero> obtenerArbolPensamiento(Tablero tablero) {
-        return generarArbolMinimax(tablero);
-    }
-
-
 }
